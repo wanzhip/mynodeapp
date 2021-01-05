@@ -1,0 +1,126 @@
+$primaryColor:#409eff;
+.fff{
+    background-color: #fff;
+}
+.pcolor{
+    color:$primaryColor;
+}
+.clearfix{
+    content:"";
+    display: block;
+    clear: both;
+}
+.font12{
+    font-size: 12px;
+}
+//min-height:56.6rem
+.width22{
+    width:22rem;
+}
+.m_2{
+    margin: 2rem;
+}
+.mlr_2{
+    margin:0 2rem;
+}
+.mtb_2{
+    margin:2rem 0;
+}
+.mt_2{
+    margin-top: 2rem;
+}
+.mr_2{
+    margin-right: 2rem;
+}
+.mb_2{
+    margin-bottom: 2rem;
+}
+.ml_2{
+    margin-left: 2rem;
+}
+.mt_1{
+    margin-top: 1rem;
+}
+.mr_1{
+    margin-right: 1rem;
+}
+.mb_1{
+    margin-bottom: 1rem;
+}
+.ml_1{
+    margin-left: 1rem;
+}
+.flex_row{
+    display: flex;
+    flex-direction: row;
+}
+.spaceBet{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.spaceAro{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.deb{
+    border: 1px solid #f40;
+}
+.hands{
+    height: 4rem;
+    line-height: 4rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: #333;
+    &:hover{
+        color: $primaryColor;
+    }
+}
+.sub{
+    width: 15rem;
+    margin: 5rem auto 0;
+}
+.pointer{
+    cursor: pointer;
+    &:hover{
+        color: $primaryColor;
+    }
+}
+.elli{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.money{
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/*控制整个滚动条*/
+::-webkit-scrollbar {
+    background-color: transparent;
+    width: 6px;
+    height: 6px;
+    background-clip: padding-box;
+}
+
+/*滚动条两端方向按钮*/
+::-webkit-scrollbar-button {
+    background-color: transparent;
+    width: 0;
+    height: 0;
+}
+
+/*滚动条中间滑动部分*/
+::-webkit-scrollbar-thumb {
+    background-color: rgba(170, 170, 170, 0.7);
+    border-radius: 5px;
+}
+
+/*滚动条右下角区域*/
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+    width: 0;
+    height: 0;
+}
