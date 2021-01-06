@@ -6,7 +6,7 @@
       <span class="pointer" @click="clear">清空搜索条件</span>
     </div>
     <div class="mt_2">
-      <el-button icon="el-icon-plus" type="primary" size="medium">添加</el-button>
+      <el-button icon="el-icon-plus" type="primary" size="medium" @click="addStu">添加</el-button>
     </div>
     <div class="mt_2">
       <el-table
@@ -67,12 +67,17 @@
         </el-table-column>
       </el-table>
     </div>
+    <AddStu ref="addStu" />
   </div>
 </template>
 
 <script>
 import { _axios } from "@/api/index";
+import AddStu from "./AddStu";
 export default {
+  components:{
+    AddStu
+  },
   data() {
     return {
       name:'',
@@ -92,6 +97,9 @@ export default {
           this.tableData = res.data;
         }
       });
+    },
+    addStu(){
+      this.$refs.addStu.showLayer = true;
     },
     search(){
       this.getStu();

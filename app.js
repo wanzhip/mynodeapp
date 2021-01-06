@@ -3,7 +3,7 @@ const cors = require('koa2-cors');
 const config = require('./default')
 const app =  new Koa();
 app.use(cors());
-app.use(require("./router/index"));
+app.use(require("./routes/index"));
 
  
 app.listen(config.port) 
