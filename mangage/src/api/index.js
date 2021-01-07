@@ -23,7 +23,7 @@ export const _axios = (url, data, method) => {
     ...data
   }
   // console.log(paramsInit)
-  if (method == 'post' || method == 'put') {
+  if (method == 'post' || method == 'put' || method == "delete") {
     return new Promise((resolve, reject) => {
       axios1({
         method,

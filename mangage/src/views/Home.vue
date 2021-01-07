@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     getStu() {
-      _axios("/a", {
+      _axios("/user", {
         name:this.name
       }, "get").then((res) => {
         console.log(res, "数据");
@@ -99,7 +99,20 @@ export default {
       });
     },
     addStu(){
-      this.$refs.addStu.showLayer = true;
+      _axios("/user", {
+        name:this.name,
+        num:'123',
+        major:'武魂',
+        grade:1,
+        school:'史莱克学院',
+        age:20
+      }, "post").then((res) => {
+        console.log(res, "数据");
+        if (res.code == 0) {
+          this.$message.success(res.msg)
+          this.getStu();
+        }
+      });
     },
     search(){
       this.getStu();
@@ -109,6 +122,13 @@ export default {
     },
     handleDelete(row){
       console.log(row);
+      _axios("/user/"+row.id, {}, "delete").then(res => {
+        console.log(res, "数据");
+        if (res.code == 0) {
+          this.$message.success(res.msg)
+          this.getStu();
+        }
+      });
     },
     clear(){
       this.name = '';
