@@ -11,11 +11,28 @@ var pool  = mysql.createPool({
 
 class User {
   constructor () {}
-  query () {
+  query (params) {
+    const name = params.name || '';
+    let sql = `SELECT * from stumsg`
+    if(name){
+      sql = `SELECT * from stumsg where name like '%${name}%'`
+    }
     return new Promise((resolve, reject) => {
-      pool.query('SELECT * from stumsg where grade = 1', function (error, results, fields) {
+      pool.query(sql, function (error, results) {
+        console.log(error,results);
           if (error) {
-              throw error
+            reject(error.message+''+ __filename)
+          };
+          resolve(results)
+      });
+    })
+  }
+  queryOne (id) {
+    console.log(id);
+    return new Promise((resolve, reject) => {
+      pool.query(`SELECT * from stumsg WHERE id = '${id}'`, function (error, results) {
+          if (error) {
+            reject(error.message+''+ __filename)
           };
           resolve(results)
       });
@@ -23,19 +40,30 @@ class User {
   }
   post(params){
     return new Promise((resolve,reject)=>{
-
       const name = params.name ;
       const num = params.num ;
       const major = params.major ;
       const grade = params.grade ;
       const school = params.school ;
       const age = params.age ;
-
       const sql = `INSERT INTO stumsg (name, num, major, grade, school, age) 
       VALUES ('${name}','${num}','${major}','${grade}','${school}','${age}')`;
       pool.query(sql,function(error, results){
         if(error){
-          throw error
+          reject(error.message+''+ __filename)
+        };
+        resolve(results)
+      })
+    })
+  }
+  put(id,params){
+    console.log(id,params);
+    return new Promise((resolve,reject)=>{
+      const {name, num, major, grade, school, age} = params;
+      const sql = `UPDATE stumsg SET name = '${name}',num = '${num}', major = '${major}', grade = '${grade}',school= '${school}',age= '${age}' WHERE id = '${id}'`;
+      pool.query(sql,function(error, results){
+        if(error){
+          reject(error.message+''+ __filename)
         };
         resolve(results)
       })
@@ -44,9 +72,9 @@ class User {
   delete (id) {
     return new Promise((resolve, reject) => {
       const sql = `DELETE FROM stumsg WHERE id = '${id}'`
-      pool.query(sql, function (error, results, fields) {
+      pool.query(sql, function (error, results) {
           if (error) {
-              throw error
+            reject(error.message+''+ __filename)
           };
           resolve(results)
       });
