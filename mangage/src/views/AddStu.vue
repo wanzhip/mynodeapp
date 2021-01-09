@@ -20,7 +20,7 @@
               <el-input v-model="ruleForm.name" style="width: 240px"></el-input>
             </el-form-item>
             <el-form-item label="学号" prop="num">
-              <el-input v-model="ruleForm.num" style="width: 240px"></el-input>
+              <el-input v-model.number="ruleForm.num" style="width: 240px"></el-input>
             </el-form-item>
             <el-form-item label="专业" prop="major">
               <el-input
@@ -30,7 +30,7 @@
             </el-form-item>
             <el-form-item label="年级" prop="grade">
               <el-input
-                v-model="ruleForm.grade"
+                v-model.number="ruleForm.grade"
                 style="width: 240px"
               ></el-input>
             </el-form-item>
@@ -41,7 +41,7 @@
               ></el-input>
             </el-form-item>
             <el-form-item label="年龄" prop="age">
-              <el-input v-model="ruleForm.age" style="width: 240px"></el-input>
+              <el-input v-model.number="ruleForm.age" style="width: 240px"></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -72,11 +72,14 @@ export default {
       },
       rules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        num: [{ required: true, message: "请输入学号", trigger: "blur" }],
+        num: [{ required: true, message: "请输入学号", trigger: "blur" },
+        {type:'number',message:'学号必须是数字',}],
         major: [{ required: true, message: "请输入专业", trigger: "blur" }],
-        grade: [{ required: true, message: "请输入年级", trigger: "blur" }],
+        grade: [{ required: true, message: "请输入年级", trigger: "blur" },
+        {type:'number',message:'年级必须是数字',}],
         school: [{ required: true, message: "请输入学校", trigger: "blur" }],
-        age: [{ required: true, message: "请输入年龄", trigger: "blur" }],
+        age: [{ required: true, message: "请输入年龄", trigger: "blur" },
+        {type:'number',message:'年龄必须是数字',}],
       },
     };
   },

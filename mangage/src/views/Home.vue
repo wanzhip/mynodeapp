@@ -26,6 +26,9 @@
         @click="addStu"
         >添加</el-button
       >
+      <el-button icon="el-icon-delete" type="danger" size="medium" @click="deletePart">批量删除</el-button>
+      <el-button icon="el-icon-download" type="primary" size="medium" >导入名单</el-button>
+      <span class="muban">下载导入模板</span>
     </div>
     <div class="mt_2">
       <el-table
@@ -34,7 +37,9 @@
         style="width: 100%"
         :row-style="{ height: '50px' }"
         :cell-style="{ padding: '0px' }"
+        @selection-change="handleSelectChange"
       >
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="序号" min-width="120" type="index">
         </el-table-column>
         <el-table-column
@@ -107,12 +112,37 @@ export default {
     return {
       name: "",
       tableData: [],
+      ids:[]
     };
   },
   created() {
     this.getStu();
   },
   methods: {
+    deletePart(){
+      _axios(
+        "/user",
+        {
+          ids: JSON.stringify(this.ids),
+        },
+        "delete"
+      ).then((res) => {
+        console.log(res, "数据");
+        if (res.code == 0) {
+          this.$message.success('ok')
+          this.getStu();
+        }else{
+          this.$message.error(res.msg)
+        }
+      });
+    },
+    handleSelectChange(val){
+      console.log(val);
+      this.ids = [];
+      val.map(item=>{
+        this.ids.push(item.id)
+      })
+    },
     getStu() {
       console.log(this.name);
       _axios(
@@ -173,5 +203,12 @@ export default {
 .home {
   padding: 20px;
   box-sizing: border-box;
+}
+.muban{
+  cursor: pointer;
+  margin-left: 10px;
+  &:hover{
+    color: #409eff;
+  }
 }
 </style>

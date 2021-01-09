@@ -5,17 +5,19 @@ const cors = require('koa2-cors');
 const koaBody = require('koa-body')
 const app = new Koa();
 app.use(cors());
-app.use(koaBody())
+app.use(koaBody({
+  strict:false
+}))
 app.use(async (ctx, next) => {
   try {
     await next();
   } catch (err) {
     console.log('1111111111');
-    ctx.response.status = err.statusCode || err.status || 500;
+    ctx.response.status = err.statusCode || err.status || 200;
     ctx.body = {
       code:'400',
       data:null,
-      message: err
+      msg: err
     };
     ctx.app.emit('err', err, ctx)
   }

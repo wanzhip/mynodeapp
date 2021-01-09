@@ -34,10 +34,10 @@ router.get('/user/:id', async (ctx, next) => {
   }
   next();
 });
-router.put('/user/:id',async (ctx, next) => {
+router.put('/user/:id', async (ctx, next) => {
   const id = ctx.params.id;
   const body = ctx.request.body;
-  console.log(ctx.request.body,'00000');
+  console.log(ctx.request.body, '00000');
   if (!id) {
     ctx.body = {
       "code": 400,
@@ -60,17 +60,25 @@ router.post('/user', async (ctx, next) => {
   console.log(ctx.request.body);
   const body = ctx.request.body;
   let data = await mysql.post(body)
-  ctx.body = {
-    "code": 0,
-    "data": null,
-    "msg": '添加成功'
+  if (typeof data == 'object') {
+    ctx.body = {
+      "code": 0,
+      "data": null,
+      "msg": '添加成功'
+    }
+  } else {
+    ctx.body = {
+      "code": 400,
+      "data": null,
+      "msg": data
+    }
   }
   next();
 })
 
 router.delete('/user/:id', async (ctx, next) => {
-  console.log(ctx.request.body);
-  console.log(ctx.params);
+  // console.log(ctx.request.body);
+  // console.log(ctx.params);
   const id = ctx.params.id;
   let data = await mysql.delete(id)
   ctx.body = {
@@ -79,6 +87,28 @@ router.delete('/user/:id', async (ctx, next) => {
     "msg": 'ok'
   }
   next();
+})
+
+router.delete('/user', async (ctx, next) => {
+  console.log(ctx.request.body);
+  const body = JSON.parse( ctx.request.body.ids );
+  if (body.length == 0) {
+    ctx.body = {
+      "code": 400,
+      "data": null,
+      "msg": '参数不可为空'
+    }
+    next();
+  } else {
+    let data = await mysql.deletePart(body)
+    ctx.body = {
+      "code": 0,
+      "data": data,
+      "msg": 'ok'
+    }
+    next();
+  }
+
 })
 
 module.exports = router.routes()
