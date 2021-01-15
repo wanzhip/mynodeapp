@@ -1,8 +1,6 @@
 const mysql = require('mysql');
 const config = require('../default');
-
-
-var pool = mysql.createPool({
+const pool = mysql.createPool({
   host: config.database.HOST,
   user: config.database.USERNAME,
   password: config.database.PASSWORD,
@@ -13,9 +11,9 @@ class User {
   constructor() { }
   query(params) {
     const name = params.name || '';
-    let sql = `SELECT * from stumsg`
+    let sql = `SELECT s.id, s.name, s.age, s.grade, s.num, s.major, a.name as areaName FROM stumsg AS s INNER JOIN stuarea as a on s.areaId = a.id`
     if (name) {
-      sql = `SELECT * from stumsg where name like '%${name}%'`
+      sql = `SELECT s.id, s.name, s.age, s.grade, s.num, s.major, a.name as areaName FROM stumsg AS s INNER JOIN stuarea as a on s.areaId = a.id where a.name like '%${name}%'`
     }
     return new Promise((resolve, reject) => {
       pool.query(sql, function (error, results) {
@@ -46,6 +44,7 @@ class User {
       const grade = params.grade;
       const school = params.school;
       const age = params.age;
+      const areaId = params.areaId;
       const queryNum = `select * from stumsg where num = '${num}'`
       pool.query(queryNum, (error, results) => {
         console.log(results, '结果');
@@ -53,8 +52,8 @@ class User {
           reject(error.message + '' + __filename)
         } else {
           if (results.length == 0) {
-            const sql = `INSERT INTO stumsg (name, num, major, grade, school, age) 
-      VALUES ('${name}','${num}','${major}','${grade}','${school}','${age}')`;
+            const sql = `INSERT INTO stumsg (name, num, major, grade, school, age, areaId) 
+      VALUES ('${name}','${num}','${major}','${grade}','${school}','${age}','${areaId}')`;
             pool.query(sql, function (error, results) {
               if (error) {
                 reject(error.message + '' + __filename)
@@ -66,10 +65,6 @@ class User {
           }
         }
       })
-
-
-
-
     })
   }
   put(id, params) {

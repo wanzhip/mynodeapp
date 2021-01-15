@@ -34,6 +34,21 @@
                 style="width: 240px"
               ></el-input>
             </el-form-item>
+            <el-form-item label="区域" prop="area">
+              <el-select
+              placeholer="请输入区域"
+              v-model="ruleForm.area"
+              >
+                <el-option
+                v-for="item in areas"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"
+                >
+                {{item.name}}
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="学校" prop="school">
               <el-input
                 v-model="ruleForm.school"
@@ -45,7 +60,7 @@
             </el-form-item>
           </el-form>
         </div>
-        <div class="bottom" style="margin-top: 30px">
+        <div class="bottom">
           <el-button size="small" @click="close">取消</el-button>
           <el-button type="primary" size="small" @click="submitForm('ruleForm')"
             >保存</el-button
@@ -61,6 +76,7 @@ import { _axios } from "@/api/index";
 export default {
   data() {
     return {
+      areas:[],
       showLayer: false,
       ruleForm: {
         name:'',
@@ -68,9 +84,11 @@ export default {
         major:'',
         grade:'',
         school:'',
-        age:''
+        age:'',
+        area:''
       },
       rules: {
+        area: [{ required: true, message: "请选择区域", trigger: "changed" }],
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
         num: [{ required: true, message: "请输入学号", trigger: "blur" },
         {type:'number',message:'学号必须是数字',}],
@@ -83,7 +101,23 @@ export default {
       },
     };
   },
+  // created() {
+  //   this.getArea();
+  // },
   methods: {
+    getArea() {
+      console.log(this.name);
+      _axios(
+        "/area",
+        {},
+        "get"
+      ).then((res) => {
+        console.log(res, "area");
+        if (res.code == 0) {
+          this.areas = res.data;
+        }
+      });
+    },
     submitForm(formName) {
       this.$refs[formName].validate(valid=>{
         if(valid){
@@ -93,7 +127,8 @@ export default {
             major:this.ruleForm.major,
             grade:this.ruleForm.grade,
             school:this.ruleForm.school,
-            age:this.ruleForm.age
+            age:this.ruleForm.age,
+            areaId:this.ruleForm.area
           },'post').then(res=>{
             console.log(res,'111');
             if(res.code == 0){
@@ -138,11 +173,11 @@ export default {
   position: fixed;
   background-color: #fff;
   width: 600px;
-  height: 500px;
+  height: 600px;
   left: 50%;
   top: 50%;
   margin-left: -300px;
-  margin-top: -250px;
+  margin-top: -300px;
   z-index: 999;
   overflow: auto;
   border-radius: 5px;
@@ -164,6 +199,6 @@ export default {
 }
 .bottom {
   width: 130px;
-  margin: auto;
+  margin:50px auto 0;
 }
 </style>

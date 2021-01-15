@@ -3,8 +3,10 @@ const config = require('../default')
 const Koa = require('koa');
 const cors = require('koa2-cors');
 const koaBody = require('koa-body')
+// const logger = require('koa-pino-logger');
 const app = new Koa();
 app.use(cors());
+// app.use(logger());
 app.use(koaBody({
   strict:false
 }))
@@ -24,6 +26,7 @@ app.use(async (ctx, next) => {
 })
 
 app.use(require("./api/user"));
+app.use(require("./api/area"));
 
 
 app.on('err', (err, ctx) => {

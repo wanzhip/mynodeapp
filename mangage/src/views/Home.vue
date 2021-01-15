@@ -26,8 +26,16 @@
         @click="addStu"
         >添加</el-button
       >
-      <el-button icon="el-icon-delete" type="danger" size="medium" @click="deletePart">批量删除</el-button>
-      <el-button icon="el-icon-download" type="primary" size="medium" >导入名单</el-button>
+      <el-button
+        icon="el-icon-delete"
+        type="danger"
+        size="medium"
+        @click="deletePart"
+        >批量删除</el-button
+      >
+      <el-button icon="el-icon-download" type="primary" size="medium"
+        >导入用户</el-button
+      >
       <span class="muban">下载导入模板</span>
     </div>
     <div class="mt_2">
@@ -72,6 +80,13 @@
           prop="grade"
         >
         </el-table-column>
+        <el-table-column
+          label="地区"
+          min-width="120"
+          align="center"
+          prop="areaName"
+        >
+        </el-table-column>
         <el-table-column label="操作" min-width="160" align="center">
           <template slot-scope="scope">
             <div>
@@ -106,42 +121,56 @@ import EditStu from "./EditStu";
 export default {
   components: {
     AddStu,
-    EditStu
+    EditStu,
   },
   data() {
     return {
       name: "",
       tableData: [],
-      ids:[]
+      ids: [],
     };
   },
   created() {
     this.getStu();
   },
   methods: {
-    deletePart(){
-      _axios(
-        "/user",
-        {
-          ids: JSON.stringify(this.ids),
-        },
-        "delete"
-      ).then((res) => {
-        console.log(res, "数据");
-        if (res.code == 0) {
-          this.$message.success('ok')
-          this.getStu();
-        }else{
-          this.$message.error(res.msg)
-        }
-      });
+    deletePart() {
+      if(this.ids.length == 0){
+        this.$message.info('请选择用户')
+        return
+      }
+      this.$confirm("确定要删除吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          _axios(
+            "/user",
+            {
+              ids: JSON.stringify(this.ids),
+            },
+            "delete"
+          ).then((res) => {
+            console.log(res, "数据");
+            if (res.code == 0) {
+              this.$message.success("ok");
+              this.getStu();
+            } else {
+              this.$message.error(res.msg);
+            }
+          });
+        })
+        .catch(() => {
+          this.$message.info("已取消");
+        });
     },
-    handleSelectChange(val){
+    handleSelectChange(val) {
       console.log(val);
       this.ids = [];
-      val.map(item=>{
-        this.ids.push(item.id)
-      })
+      val.map((item) => {
+        this.ids.push(item.id);
+      });
     },
     getStu() {
       console.log(this.name);
@@ -159,6 +188,7 @@ export default {
       });
     },
     addStu() {
+      this.$refs.addStu.getArea();
       this.$refs.addStu.showLayer = true;
     },
     search() {
@@ -200,14 +230,10 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/css/common.scss";
-.home {
-  padding: 20px;
-  box-sizing: border-box;
-}
-.muban{
+.muban {
   cursor: pointer;
   margin-left: 10px;
-  &:hover{
+  &:hover {
     color: #409eff;
   }
 }

@@ -1,5 +1,5 @@
 const Router = require('@koa/router');
-// const koaBody = require('koa-body')
+const fs = require('fs');
 const router = new Router();
 
 const mysql = require('../../services/user')
@@ -108,7 +108,15 @@ router.delete('/user', async (ctx, next) => {
     }
     next();
   }
+})
 
+router.post('user/upload', async(ctx, next) =>{
+  const file = ctx.request.body.file.file;
+  const reader = fs.createReadStream(file.path);
+  const ext = file.name.split('.').pop();
+  console.log(`upload/${Math.random().toString()}.${ext}`);
+  const upStream = fs.createWriteStream(`upload/${Math.random().toString()}.${ext}`)
+  reader.pipe(upStream); 
 })
 
 module.exports = router.routes()

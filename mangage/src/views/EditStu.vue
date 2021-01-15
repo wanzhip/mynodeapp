@@ -3,7 +3,7 @@
     <div class="mask"></div>
     <div class="pop">
       <div class="top">
-        <div class="tag">添加用户</div>
+        <div class="tag">编辑用户</div>
         <div @click="close" class="close touch">
           <i class="el-icon-close"></i>
         </div>
