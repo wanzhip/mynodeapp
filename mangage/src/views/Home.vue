@@ -34,9 +34,10 @@
         >批量删除</el-button
       >
       <el-button icon="el-icon-download" type="primary" size="medium"
+      @click="importUser"
         >导入用户</el-button
       >
-      <span class="muban">下载导入模板</span>
+      <a class="muban" href="http://localhost:3000/templates/user.xlsx" target="_blank">下载导入模板</a>
     </div>
     <div class="mt_2">
       <el-table
@@ -111,6 +112,7 @@
     </div>
     <AddStu ref="addStu" @parentUpdate="getStu" />
     <EditStu ref="editStu" @parentUpdate="getStu" />
+    <ImportUser ref="importUser" @parentUpdate="getStu" />
   </div>
 </template>
 
@@ -118,10 +120,12 @@
 import { _axios } from "@/api/index";
 import AddStu from "./AddStu";
 import EditStu from "./EditStu";
+import ImportUser from "./ImportUser";
 export default {
   components: {
     AddStu,
     EditStu,
+    ImportUser
   },
   data() {
     return {
@@ -134,6 +138,9 @@ export default {
     this.getStu();
   },
   methods: {
+    importUser(){
+      this.$refs.importUser.showImportFile = true;
+    },
     deletePart() {
       if(this.ids.length == 0){
         this.$message.info('请选择用户')

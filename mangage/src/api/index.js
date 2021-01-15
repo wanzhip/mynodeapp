@@ -82,7 +82,7 @@ axios1.interceptors.response.use(
   }
 );
 
-export default _axios;
+
 
 
 

@@ -1,5 +1,7 @@
 const Router = require('@koa/router');
 const fs = require('fs');
+const static = require('koa-static');
+const send = require('koa-send');
 const router = new Router();
 
 const mysql = require('../../services/user')
@@ -14,6 +16,27 @@ router.get('/user', async (ctx, next) => {
   }
   next();
 });
+
+router.get('/templates/:name', async (ctx, next) => {
+  const name = ctx.params.name;
+  const path = `public/templates/${name}`;
+  ctx.attachment(path);
+  await send(ctx, path);
+});
+
+router.post('/upload', async (ctx)=>{
+  const file = ctx.request.files.file;   // 获取上传文件
+  console.log(file,'文件');
+  const reader = fs.createReadStream(file.path);  // 创建可读流
+  const ext = file.name.split('.').pop();     // 获取上传文件扩展名
+  const upStream = fs.createWriteStream(`public/upload/${Math.random().toString()}.${ext}`);     // 创建可写流
+  reader.pipe(upStream);  // 可读流通过管道写入可写流
+  return ctx.body = {
+    "code": 0,
+    "data": null,
+    "msg": '上传成功'
+  };
+})
 
 router.get('/user/:id', async (ctx, next) => {
   const id = ctx.params.id;
