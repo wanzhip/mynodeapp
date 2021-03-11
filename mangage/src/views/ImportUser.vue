@@ -88,18 +88,16 @@ export default {
       }
       let params = new FormData();
       params.append("file", file);
-      axios.defaults.baseURL = 'http://localhost:3000';
-      axios
-        .post("/upload", params)
-        .then(res => {
-          console.log(res,'111');
-          if (res.data.code == 0) {
-            this.$message.success(res.data.msg);
-            this.showImportFile = false;
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        })
+      axios.defaults.baseURL = "http://localhost:3000";
+      axios.post("/upload", params).then((res) => {
+        console.log(res, "111");
+        if (res.data.code == 0) {
+          this.$message.success(res.data.msg);
+          this.showImportFile = false;
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
       return false;
     },
   },

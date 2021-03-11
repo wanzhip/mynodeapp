@@ -45,8 +45,9 @@ class User {
       const school = params.school;
       const age = params.age;
       const areaId = params.areaId;
-      const queryNum = `select * from stumsg where num = '${num}'`
-      pool.query(queryNum, (error, results) => {
+      // const queryNum = `select * from stumsg where num = '${num}'`
+      const queryNum = `select * from stumsg where num = ?`
+      pool.query(queryNum, [num], (error, results) => {
         console.log(results, '结果');
         if (error) {
           reject(error.message + '' + __filename)
@@ -65,6 +66,67 @@ class User {
           }
         }
       })
+    })
+  }
+  postAll(tableHeader, xlsxData) {
+    let nums = [];
+    let existNum = [];
+    let tableData = [];
+    xlsxData.forEach((item, index) => {
+      //获取表明
+      const name = item[tableHeader.A1];
+      const school = item[tableHeader.B1];
+      const num = item[tableHeader.C1];
+      const major = item[tableHeader.D1];
+      const grade = item[tableHeader.E1];
+      const areaId = item[tableHeader.F1];
+      const age = item[tableHeader.G1];
+      tableData.push([name, school, num, major, grade, areaId, age])
+      nums.push(num);//全部学号
+    })
+    return new Promise((resolve, reject) => {
+      const queryNum = `select * from stumsg where num in (?)`
+      pool.query(queryNum, [nums], (error, results) => {
+        console.log(error, JSON.stringify(results), '某几个数据');
+        if (results.length > 0) {
+          //已存在相同学号的人
+          results.map(item => {
+            const num = +item.num;
+            let index = nums.indexOf(num);
+            existNum.push({
+              row: index + 1,
+              msg: `学号${item.num}已存在`
+            })
+          })
+          reject({
+            code: 400,
+            data: existNum,
+            msg: ''
+          })
+        } else {
+          resolve(1);
+        }
+      })
+    }).then(res => {
+      const sql = `INSERT INTO stumsg (name,school, num, major, grade, areaId, age) VALUES ?`;
+      return new Promise((resolve, reject) => {
+        pool.query(sql, [tableData], function (error, results) {
+          if (error) {
+            reject({
+              "code": 400,
+              "data": null,
+              "msg": error.message + '' + __filename
+            })
+          };
+          resolve({
+            "code": 0,
+            "data": null,
+            "msg": '导入成功'
+          })
+        })
+      })
+    }).catch(err => {
+      return err
     })
   }
   put(id, params) {
@@ -91,7 +153,7 @@ class User {
       });
     })
   }
-  
+
   deletePart(body) {
     const ids = body;
     console.log(ids);
