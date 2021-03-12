@@ -1,6 +1,5 @@
 const Router = require('@koa/router');
 const xlsx = require('xlsx');
-const static = require('koa-static');
 const send = require('koa-send');
 const router = new Router();
 

@@ -27,6 +27,7 @@ app.use(async (ctx, next) => {
 })
 app.use(require("./api/user"));
 app.use(require("./api/area"));
+app.use(require("./api/login"));
 
 
 app.on('err', (err, ctx) => {

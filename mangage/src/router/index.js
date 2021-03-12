@@ -4,11 +4,11 @@ import VueRouter from "vue-router";
 Vue.use(VueRouter);
 
 const routes = [
-  // {
-  //   path:'/',
-  //   name:'login',
-  //   component:()=>import('../views/Login.vue'),
-  // },
+  {
+    path:'/login',
+    name:'login',
+    component:()=>import('../views/Login.vue'),
+  },
   {
     path:'/',
     component:()=>import('../views/Navbar'),
