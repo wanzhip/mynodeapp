@@ -10,7 +10,7 @@ import env from "./env";
  * @param {*} data 
  */
 
-const axios1 = axios.create();
+export const axios1 = axios.create();
 if (env == 'development') {
   axios1.defaults.baseURL = 'http://localhost:3000';
 } else {

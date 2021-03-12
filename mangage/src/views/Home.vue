@@ -33,11 +33,26 @@
         @click="deletePart"
         >批量删除</el-button
       >
-      <el-button icon="el-icon-download" type="primary" size="medium"
-      @click="importUser"
+      <el-button
+        icon="el-icon-download"
+        type="primary"
+        size="medium"
+        @click="exportUser"
+        >导出用户</el-button
+      >
+      <el-button
+        icon="el-icon-download"
+        type="primary"
+        size="medium"
+        @click="importUser"
         >导入用户</el-button
       >
-      <a class="muban" href="http://localhost:3000/templates/user.xlsx" target="_blank">下载导入模板</a>
+      <a
+        class="muban"
+        href="http://localhost:3000/templates/user.xlsx"
+        target="_blank"
+        >下载导入模板</a
+      >
     </div>
     <div class="mt_2">
       <el-table
@@ -110,6 +125,17 @@
         </el-table-column>
       </el-table>
     </div>
+    <div style="margin-top: 20px">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="pageSizes"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      >
+      </el-pagination>
+    </div>
     <AddStu ref="addStu" @parentUpdate="getStu" />
     <EditStu ref="editStu" @parentUpdate="getStu" />
     <ImportUser ref="importUser" @parentUpdate="getStu" />
@@ -118,6 +144,7 @@
 
 <script>
 import { _axios } from "@/api/index";
+import { axios1 } from "@/api/index";
 import AddStu from "./AddStu";
 import EditStu from "./EditStu";
 import ImportUser from "./ImportUser";
@@ -125,26 +152,43 @@ export default {
   components: {
     AddStu,
     EditStu,
-    ImportUser
+    ImportUser,
   },
   data() {
     return {
       name: "",
       tableData: [],
       ids: [],
+      currentPage: 1,
+      pageSizes: [2, 5, 10, 20, 30],
+      total: 0,
+      optionSize: 2,
     };
   },
   created() {
     this.getStu();
   },
   methods: {
-    importUser(){
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.optionSize = val;
+      this.getStu();
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.currentPage = val;
+      this.getStu();
+    },
+    exportUser() {
+      open(axios1.defaults.baseURL + "/exportUser?name=" + this.name);
+    },
+    importUser() {
       this.$refs.importUser.showImportFile = true;
     },
     deletePart() {
-      if(this.ids.length == 0){
-        this.$message.info('请选择用户')
-        return
+      if (this.ids.length == 0) {
+        this.$message.info("请选择用户");
+        return;
       }
       this.$confirm("确定要删除吗？", "提示", {
         confirmButtonText: "确定",
@@ -185,11 +229,14 @@ export default {
         "/user",
         {
           name: this.name,
+          page:this.currentPage,
+          limit:this.optionSize
         },
         "get"
       ).then((res) => {
         console.log(res, "数据");
         if (res.code == 0) {
+          this.total = res.count;
           this.tableData = res.data;
         }
       });
@@ -199,6 +246,7 @@ export default {
       this.$refs.addStu.showLayer = true;
     },
     search() {
+      this.currentPage = 1;
       this.getStu();
     },
     handleEdit(row) {
@@ -229,7 +277,7 @@ export default {
     },
     clear() {
       this.name = "";
-      this.getStu();
+      this.search();
     },
   },
 };

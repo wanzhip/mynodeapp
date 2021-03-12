@@ -10,10 +10,41 @@ const pool = mysql.createPool({
 class User {
   constructor() { }
   query(params) {
-    const name = params.name || '';
-    let sql = `SELECT s.id, s.name, s.age, s.grade, s.num, s.major, a.name as areaName FROM stumsg AS s INNER JOIN stuarea as a on s.areaId = a.id`
+    const name = params.name || ''; // name school num major grade area age
+    const page = params.page || 1; // name school num major grade area age 1-1)*10 1*10  2-1)*10 2*10  11 20
+    const limit = params.limit || 10; // name school num major grade area age
+    const start = (page - 1) * limit;
+    let sql = `SELECT s.id, s.name, s.age, s.grade, s.num, s.major, a.name as areaName FROM stumsg AS s INNER JOIN stuarea as a on s.areaId = a.id where s.name like ? order by id limit ?, ?`
+    let arr = ['%' + name + '%', start, +limit];
+    console.log(arr,'当前要查的');
+    return new Promise((resolve, reject) => {
+      let qsql = `SELECT COUNT(id) as total FROM stumsg;`
+      pool.query(qsql, function (error, results) {
+        console.log(error, results);
+        if (error) {
+          reject(error.message + '' + __filename)
+        };
+        resolve(results)
+      });
+    }).then(res => {
+      console.log(res, '查询数据');
+      return new Promise((resolve, reject) => {
+        pool.query(sql, arr, function (error, results) {
+          console.log(error, results);
+          if (error) {
+            reject(error.message + '' + __filename)
+          };
+          resolve({results, res})
+        });
+      })
+    })
+  }
+  queryExcel(params) {
+    const name = params.name || ''; // name school num major grade area age
+    let sql = `SELECT name, school, num, major, grade, areaId, age from stumsg`
     if (name) {
-      sql = `SELECT s.id, s.name, s.age, s.grade, s.num, s.major, a.name as areaName FROM stumsg AS s INNER JOIN stuarea as a on s.areaId = a.id where a.name like '%${name}%'`
+      console.log('有名字输入');
+      sql = `SELECT name, school, num, major, grade, areaId, age from stumsg where name like '%${name}%'`
     }
     return new Promise((resolve, reject) => {
       pool.query(sql, function (error, results) {

@@ -1,6 +1,4 @@
 const Router = require('@koa/router');
-const fs = require('fs');
-const path = require('path');
 const xlsx = require('xlsx');
 const static = require('koa-static');
 const send = require('koa-send');
@@ -11,9 +9,11 @@ const mysql = require('../../services/user')
 router.get('/user', async (ctx, next) => {
   console.log(ctx.request.query);
   let data = await mysql.query(ctx.request.query)
+  console.log('拿到的数据',data,'拿到的数据');
   ctx.body = {
     "code": 0,
-    "data": data,
+    "count":data.res[0].total,
+    "data": data.results,
     "msg": 'ok'
   }
   next();
@@ -25,45 +25,72 @@ router.get('/templates/:name', async (ctx, next) => {
   ctx.attachment(path);
   await send(ctx, path);
 });
-
-router.post('/upload', async (ctx) => {
-  console.log('11111111111');
-
-  const file = ctx.request.files.file;   // 获取上传文件
-  // const reader = fs.createReadStream(file.path);  // 创建可读流
-  // const ext = file.name.split('.').pop();
-  // let fileName = `public/upload/${file.name.split('.').shift()}.${ext}`
-  // const upStream = fs.createWriteStream(fileName);    // 创建可写流
-  // reader.pipe(upStream);  // 可读流通过管道写入可写流
-  // upStream.on('finish',  async function () {
-    // console.error('写入已完成');
-    // const path2 = path.join(__dirname, '../../public/upload/user.xlsx')
-    let workbook = xlsx.readFile(file.path); //workbook就是xls文档对象
-    let sheetNames = workbook.SheetNames; //获取表名
-    let sheet = workbook.Sheets[sheetNames[0]]; //通过表明得到表对象
-    console.log(sheet);
-    console.log(sheet['!ref']);
-    console.log(sheet['A1'], '111');
-    console.log(sheet['A1'].v, '222');
-    let A1 = sheet['A1'].v;
-    let B1 = sheet['B1'].v;
-    let C1 = sheet['C1'].v;
-    let D1 = sheet['D1'].v;
-    let E1 = sheet['E1'].v;
-    let F1 = sheet['F1'].v;
-    let G1 = sheet['G1'].v;
-    let tableHeader = {//列名
-      A1, B1, C1, D1, E1, F1, G1
+function createWs(data, fields, titles) {
+  const ws = xlsx.utils.json_to_sheet(
+    data,
+    {
+      header: fields
     }
-    console.log(tableHeader);
-    let xlsxData = xlsx.utils.sheet_to_json(sheet); //通过工具将表对象的数据读出来并转成json
-    console.log(xlsxData);
-    let data =  await mysql.postAll(tableHeader, xlsxData)
-    console.log(data, '数据库返回数据');
-    ctx.body = data;
-    console.log('执行结束');
-  // });
-  // console.log('33333333333333');
+  )
+  const range = xlsx.utils.decode_range(ws['!ref'])
+  for (let c = range.s.c; c <= range.e.c; c++) {
+    const header = xlsx.utils.encode_col(c) + '1'
+    ws[header].v = titles[ws[header].v]
+  }
+  return ws
+}
+router.get('/exportUser', async (ctx, next) => {
+  let data = await mysql.queryExcel(ctx.request.query)
+  console.log(data, '要导出的数据');
+  const files = ['name', 'school', 'num','major', 'grade', 'areaId', 'age'];
+  const titles = {
+    name: '姓名',
+    school: '学校',
+    num: '学号',
+    major: '专业',
+    grade: '年级',
+    areaId: '地区',
+    age: '年龄',
+  }
+  let sheet = createWs(data, files, titles)
+  let workbook = xlsx.utils.book_new()
+  xlsx.utils.book_append_sheet(workbook, sheet, 'Sheet1')//最后那个是工作薄表的命名
+  let buf = xlsx.write(workbook, {
+    type: 'buffer',
+    bookType: 'xlsx'
+  })
+  let filename = 'users.xlsx'
+  ctx.set('Content-disposition', 'attachment; filename=' + filename);
+  ctx.type = "xlsx"
+  ctx.body = buf
+  return buf
+});
+router.post('/upload', async (ctx) => {
+  const file = ctx.request.files.file;   // 获取上传文件
+  let workbook = xlsx.readFile(file.path); //workbook就是xls文档对象
+  let sheetNames = workbook.SheetNames; //获取表名
+  let sheet = workbook.Sheets[sheetNames[0]]; //通过表明得到表对象
+  console.log(sheet);
+  console.log(sheet['!ref']);
+  console.log(sheet['A1'], '111');
+  console.log(sheet['A1'].v, '222');
+  let A1 = sheet['A1'].v;
+  let B1 = sheet['B1'].v;
+  let C1 = sheet['C1'].v;
+  let D1 = sheet['D1'].v;
+  let E1 = sheet['E1'].v;
+  let F1 = sheet['F1'].v;
+  let G1 = sheet['G1'].v;
+  let tableHeader = {//列名
+    A1, B1, C1, D1, E1, F1, G1
+  }
+  console.log(tableHeader);
+  let xlsxData = xlsx.utils.sheet_to_json(sheet); //通过工具将表对象的数据读出来并转成json
+  console.log(xlsxData);
+  let data = await mysql.postAll(tableHeader, xlsxData)
+  console.log(data, '数据库返回数据');
+  ctx.body = data;
+  console.log('执行结束');
 })
 
 router.get('/user/:id', async (ctx, next) => {
