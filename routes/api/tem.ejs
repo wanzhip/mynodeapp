@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%=title%></title>
+    <meta charset="utf-8"/>
+</head>
+<body>
+name:<%= userInfo.name %><br/>
+age:<%= userInfo.age %><br/>
+<div></div>
+<%# 转义 HTML 标签 %>
+message:<%= userInfo.message %>
+<br/>
+<div></div>
+<%# 非转义 HTML 标签 %>
+message2:<%- userInfo.message %>
+<%# 注释不显示 %>
+<%#  %> 
+<br/>
+<%   if(userInfo.age > 5){  %>
+范东方赛
+5+
+<%   }else{        %>
+<div style="color:#f40">fdshjkfhksd</div>
+<%   }           %>
+
+</body>
+</html>

@@ -14,7 +14,7 @@ class User {
     const page = params.page || 1; // name school num major grade area age 1-1)*10 1*10  2-1)*10 2*10  11 20
     const limit = params.limit || 10; // name school num major grade area age
     const start = (page - 1) * limit;
-    let sql = `SELECT s.id, s.name, s.age, s.grade, s.num, s.major, a.name as areaName FROM stumsg AS s INNER JOIN stuarea as a on s.areaId = a.id where s.name like ? order by id limit ?, ?`
+    let sql = `SELECT s.id, s.name,s.school, s.age, s.grade, s.num, s.major, a.name as areaName FROM stumsg AS s INNER JOIN stuarea as a on s.areaId = a.id where s.name like ? order by id limit ?, ?`
     let arr = ['%' + name + '%', start, +limit];
     console.log(arr,'当前要查的');
     return new Promise((resolve, reject) => {
@@ -76,7 +76,6 @@ class User {
       const school = params.school;
       const age = params.age;
       const areaId = params.areaId;
-      // const queryNum = `select * from stumsg where num = '${num}'`
       const queryNum = `select * from stumsg where num = ?`
       pool.query(queryNum, [num], (error, results) => {
         console.log(results, '结果');

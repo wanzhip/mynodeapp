@@ -69,6 +69,7 @@
         </el-table-column>
       </el-table>
     </div>
+    <div id="insertHtml"></div>
     <AddArea ref="addArea" @parentUpdate="getArea" />
     <EditArea ref="editArea" @parentUpdate="getArea" />
   </div>
@@ -128,9 +129,10 @@ export default {
         "get"
       ).then((res) => {
         console.log(res, "数据");
-        if (res.code == 0) {
-          this.tableData = res.data;
-        }
+        document.getElementById('insertHtml').innerHTML = res;
+        // if (res.code == 0) {
+        //   this.tableData = res.data;
+        // }
       });
     },
     addArea() {

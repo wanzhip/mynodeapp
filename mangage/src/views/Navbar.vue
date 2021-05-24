@@ -11,9 +11,17 @@
           >{{ item.name }}</el-button
         >
       </div>
-      <div><a href="#" @click="loginOut" style="padding:5px 10px">退出</a></div>
+      <div style="display:flex;">
+        <div @click="loginOut" style="padding: 5px 10px; cursor: pointer">
+          退出
+        </div>
+        <div @click="goBlog" style="padding: 5px 10px; cursor: pointer">
+          博客
+        </div>
+      </div>
     </div>
     <div>
+      123
       <router-view></router-view>
     </div>
   </div>
@@ -29,12 +37,10 @@ export default {
         {
           name: "用户",
           path: "/home",
-          component: "@/views/Home",
         },
         {
           name: "地区",
           path: "/area",
-          component: "@/views/Area",
         },
       ],
     };
@@ -42,15 +48,22 @@ export default {
   methods: {
     goUrl(item, index) {
       this.defaulst = index;
+      console.log(item.path);
       this.$router.push({
         path: item.path,
       });
     },
-    loginOut(){
-      console.log('退出');
+    loginOut() {
+      console.log("退出");
       this.$router.push({
-        name:'login'
-      })
+        name: "login",
+      });
+    },
+    goBlog() {
+      console.log("博客");
+      this.$router.push({
+        name: "blog",
+      });
     },
   },
 };
@@ -65,7 +78,7 @@ export default {
   background-color: #409eff;
   color: #fff;
 }
-.spaceBet{
+.spaceBet {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
